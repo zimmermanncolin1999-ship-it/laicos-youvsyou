@@ -1,0 +1,43 @@
+# You vs You — production deploy on Hostinger VPS, fronted by the shared
+# Traefik instance that also serves n8n and the Meeting App.
+
+services:
+  youvsyou:
+    build: .
+    container_name: youvsyou
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Force the SQLite DB onto the bind-mounted volume so it survives
+      # container rebuilds. Overrides whatever .env had.
+      DATABASE_URL: "file:./data/youvsyou.db"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - traefik
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+
+      # HTTPS router
+      - "traefik.http.routers.youvsyou.rule=Host(`youvsyou.laicosmedia.de`)"
+      - "traefik.http.routers.youvsyou.entrypoints=websecure"
+      - "traefik.http.routers.youvsyou.tls=true"
+      - "traefik.http.routers.youvsyou.tls.certresolver=letsencrypt"
+      - "traefik.http.services.youvsyou.loadbalancer.server.port=3000"
+
+      # HTTP → HTTPS redirect
+      - "traefik.http.routers.youvsyou-http.rule=Host(`youvsyou.laicosmedia.de`)"
+      - "traefik.http.routers.youvsyou-http.entrypoints=web"
+      - "traefik.http.routers.youvsyou-http.middlewares=youvsyou-https"
+      - "traefik.http.middlewares.youvsyou-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.youvsyou-https.redirectscheme.permanent=true"
+
+networks:
+  # External — already created by the existing Traefik setup (same network
+  # as meeting-app + n8n).
+  traefik:
+    external: true

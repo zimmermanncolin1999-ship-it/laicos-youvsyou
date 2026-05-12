@@ -1,0 +1,58 @@
+// You vs You — Gamified Self-Discipline App
+// SQLite. Quest/Achievement definitions live in code (lib/quests.ts, lib/achievements.ts)
+// — DB only persists user state, completions and unlocks.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+
+  totalXP       Int      @default(0)
+  currentLevel  Int      @default(1)
+
+  strength      Int      @default(0)
+  nutrition     Int      @default(0)
+  discipline    Int      @default(0)
+
+  streakCurrent Int      @default(0)
+  streakBest    Int      @default(0)
+  lastDateKey   String?
+
+  completions   QuestCompletion[]
+  unlocks       AchievementUnlock[]
+}
+
+model QuestCompletion {
+  id          String   @id @default(cuid())
+  userId      String
+  questId     String
+  dateKey     String
+  completedAt DateTime @default(now())
+  xpAwarded   Int
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questId, dateKey])
+  @@index([userId, dateKey])
+}
+
+model AchievementUnlock {
+  id             String   @id @default(cuid())
+  userId         String
+  achievementId  String
+  unlockedAt     DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+}

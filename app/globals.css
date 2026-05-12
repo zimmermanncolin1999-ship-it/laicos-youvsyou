@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme {
+  /* Synthwave / JRPG palette (from the design handoff) */
+  --color-bg-deep:        #08081a;
+  --color-bg-panel:       #1a0b3d;
+  --color-bg-panel-inner: #140830;
+
+  --color-neon-cyan:    #5ce0ff;
+  --color-neon-magenta: #ff3ea5;
+  --color-neon-gold:    #ffd24a;
+  --color-neon-green:   #39ff7a;
+  --color-neon-purple:  #b14bff;
+  --color-neon-red:     #ff5d6c;
+
+  --color-streak-orange: #ff7a1a;
+  --color-streak-amber:  #ffb84a;
+
+  --color-text-light: #eaffea;
+  --color-text-dim:   #9a8ac4;
+
+  --font-pixel: "Press Start 2P", monospace;
+  --font-body:  "VT323", monospace;
+  --font-mono:  "JetBrains Mono", monospace;
+
+  --animate-twinkle: twinkle 2.4s ease-in-out infinite;
+  --animate-streak-pulse: streakPulse 1.4s infinite;
+  --animate-grid-scroll: gridScroll 4s linear infinite;
+  --animate-rays: rays 8s linear infinite;
+  --animate-shake: shake 0.6s ease-in-out;
+  --animate-pop-in: popIn 0.45s ease-out;
+  --animate-fade-in: fadeIn 0.3s ease-out;
+}
+
+@keyframes twinkle      { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+@keyframes streakPulse  {
+  0%,100% { box-shadow: 0 0 12px rgba(255,122,26,0.8), 0 3px 0 #000; }
+  50%     { box-shadow: 0 0 22px rgba(255,184,74,1), 0 0 36px rgba(255,122,26,0.6), 0 3px 0 #000; }
+}
+@keyframes gridScroll   { from { background-position: 0 0; } to { background-position: 0 29px; } }
+@keyframes rays         { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes shake        { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+@keyframes popIn        { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes fadeIn       { from { opacity: 0; } to { opacity: 1; } }
+@keyframes blink        { 50% { opacity: 0; } }
+@keyframes sparkle      { from { opacity: 0.2; transform: scale(0.5); } to { opacity: 1; transform: scale(1.4); } }
+
+html, body {
+  background: var(--color-bg-deep);
+  color: var(--color-text-light);
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  font-family: var(--font-body);
+  min-height: 100%;
+  /* Prevent any descendant from causing horizontal scroll on mobile. */
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ---------- Phone shell (desktop bezel + mobile fullscreen) ---------- */
+.phone-shell-outer {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: hidden;
+}
+.phone-shell-frame {
+  width: 440px;
+  max-width: 100%;
+  min-height: 800px;
+  height: min(92vh, 880px);
+  background: #000;
+  border: 3px solid #1a1f3a;
+  border-radius: 28px;
+  padding: 6px;
+  box-shadow: 0 0 0 1px #000, 0 0 60px rgba(92,224,255,0.18), 0 30px 80px rgba(0,0,0,0.7);
+  position: relative;
+  overflow: hidden;
+}
+.phone-shell-viewport {
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  background: var(--color-bg-deep);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 519px) {
+  .phone-shell-outer {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .phone-shell-frame {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100dvh;
+    height: 100dvh;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  .phone-shell-viewport {
+    border-radius: 0;
+  }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.18) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.text-neon-glow {
+  text-shadow:
+    0 0 8px currentColor,
+    0 0 14px currentColor,
+    2px 2px 0 #000;
+}
+
+.text-shadow-hard {
+  text-shadow: 2px 2px 0 #000;
+}
