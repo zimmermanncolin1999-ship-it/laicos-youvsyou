@@ -1,43 +1,28 @@
-# You vs You — production deploy on Hostinger VPS, fronted by the shared
-# Traefik instance that also serves n8n and the Meeting App.
+# You vs You — production deploy on Hostinger VPS.
+# Joins the same shared Traefik network (`n8n_default`) as n8n and meeting-app.
 
 services:
   youvsyou:
     build: .
     container_name: youvsyou
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     environment:
-      # Force the SQLite DB onto the bind-mounted volume so it survives
-      # container rebuilds. Overrides whatever .env had.
+      # Force SQLite onto the bind-mounted volume so data survives rebuilds.
       DATABASE_URL: "file:./data/youvsyou.db"
     volumes:
       - ./data:/app/data
-    networks:
-      - traefik
-    expose:
-      - "3000"
     labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik"
-
-      # HTTPS router
-      - "traefik.http.routers.youvsyou.rule=Host(`youvsyou.laicosmedia.de`)"
-      - "traefik.http.routers.youvsyou.entrypoints=websecure"
-      - "traefik.http.routers.youvsyou.tls=true"
-      - "traefik.http.routers.youvsyou.tls.certresolver=letsencrypt"
-      - "traefik.http.services.youvsyou.loadbalancer.server.port=3000"
-
-      # HTTP → HTTPS redirect
-      - "traefik.http.routers.youvsyou-http.rule=Host(`youvsyou.laicosmedia.de`)"
-      - "traefik.http.routers.youvsyou-http.entrypoints=web"
-      - "traefik.http.routers.youvsyou-http.middlewares=youvsyou-https"
-      - "traefik.http.middlewares.youvsyou-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.youvsyou-https.redirectscheme.permanent=true"
+      - traefik.enable=true
+      - traefik.http.routers.youvsyou.rule=Host(`youvsyou.laicosmedia.de`)
+      - traefik.http.routers.youvsyou.tls=true
+      - traefik.http.routers.youvsyou.entrypoints=web,websecure
+      - traefik.http.routers.youvsyou.tls.certresolver=mytlschallenge
+      - traefik.http.services.youvsyou.loadbalancer.server.port=3000
 
 networks:
-  # External — already created by the existing Traefik setup (same network
-  # as meeting-app + n8n).
-  traefik:
+  # Shared with n8n + meeting-app so Traefik can route to all of them.
+  default:
+    name: n8n_default
     external: true
