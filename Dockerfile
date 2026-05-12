@@ -41,6 +41,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/scripts/seed-prod.mjs ./scripts/seed-prod.mjs
+COPY --from=builder /app/scripts/create-user.mjs ./scripts/create-user.mjs
 COPY --from=builder /app/public ./public
 
 # Standalone Next.js server (overlays the bundled tree-shaken node_modules
