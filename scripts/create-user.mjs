@@ -36,4 +36,4 @@ db.prepare(
 ).run(id, username, hash);
 
 console.log(`✓ Created user "${username}" (id=${id})`);
-console.log(`  Login via: https://youvsyou.laicosmedia.de`);
+console.log(`  Login via: https://youvsyou.colinzimmermann.de`);

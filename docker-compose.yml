@@ -15,7 +15,7 @@ services:
       - ./data:/app/data
     labels:
       - traefik.enable=true
-      - traefik.http.routers.youvsyou.rule=Host(`youvsyou.laicosmedia.de`)
+      - traefik.http.routers.youvsyou.rule=Host(`youvsyou.colinzimmermann.de`)
       - traefik.http.routers.youvsyou.tls=true
       - traefik.http.routers.youvsyou.entrypoints=web,websecure
       - traefik.http.routers.youvsyou.tls.certresolver=mytlschallenge

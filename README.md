@@ -47,8 +47,8 @@ Gleicher Workflow wie die Meeting-App: Docker-Compose hinter Traefik, SSL automa
    ```bash
    docker compose up -d --build
    ```
-   Traefik holt automatisch ein Let's-Encrypt-Zert und routet `youvsyou.laicosmedia.de` auf den Container.
-5. **Smoke test**: <https://youvsyou.laicosmedia.de> → Login-Seite
+   Traefik holt automatisch ein Let's-Encrypt-Zert und routet `youvsyou.colinzimmermann.de` auf den Container.
+5. **Smoke test**: <https://youvsyou.colinzimmermann.de> → Login-Seite
 
 ### Updates ausliefern
 
